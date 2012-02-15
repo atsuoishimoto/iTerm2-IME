@@ -268,7 +268,10 @@ static size_t getCSIParam(unsigned char *datap,
     }
     else
         param->question = NO;
+
+
     while (datalen > 0) {
+
         if (isdigit(*datap)) {
             int n = *datap - '0';
             datap++;
