@@ -268,10 +268,7 @@ static size_t getCSIParam(unsigned char *datap,
     }
     else
         param->question = NO;
-
-
     while (datalen > 0) {
-
         if (isdigit(*datap)) {
             int n = *datap - '0';
             datap++;
@@ -313,6 +310,29 @@ static size_t getCSIParam(unsigned char *datap,
             }
         }
         else if (isalpha(*datap)||*datap=='@') {
+            if (*datap == 'v') {
+                if (readNumericParameter == YES) {
+                    TISInputSourceRef tis=nil;
+                    switch (param->p[param->count-1]) {
+                        case 0: 
+                            tis =  TISCopyCurrentASCIICapableKeyboardInputSource(); 
+                            break;
+                        case 1: 
+                            tis = TISCopyInputSourceForLanguage(
+                                    [NSLocale canonicalLocaleIdentifierFromString:@"ja"]); 
+                            break;
+                        default:
+                            break;
+                    }
+                    if (tis) {
+                        TISSelectInputSource(tis); 
+                    }
+                }
+                datap++;
+                datalen--;
+                param->cmd = 0xff;
+                break;
+            }
             datalen--;
             param->cmd = unrecognized?0xff:*datap;
             datap++;
